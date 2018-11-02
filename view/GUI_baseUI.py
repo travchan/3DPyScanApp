@@ -8,9 +8,10 @@ class UI:
         Top row has the title "BANK OF D.H.E" and the underline to seperate the title block
     """
 
-    def __init__(self, master):
+    def __init__(self, master, img):
         # self.ATM = ATM()
         self.master = master
+        self.img = img
         self.screenW = '480'
         self.screenH = '320'
         # self.master.title('ATM')
@@ -42,10 +43,19 @@ class UI:
         # #----------------TITLE FRAME--------------------------------
         # makes boarders to center the title label
         self.title_frame.grid_rowconfigure(0, weight=1)
-        self.title_frame.grid_rowconfigure(2, weight=1)
+        self.title_frame.grid_rowconfigure(3, weight=1)
 
-        self.title_label = Label(self.title_frame, text='Bank of D.H.E', font=("Helvetica", 16, "bold"))
-        self.title_label.grid(row=1, column=1, padx=10, pady=10)
+        BCIT_logo = PhotoImage(file=img)
+
+        self.BCIT_logo = Label(self.title_frame, image=BCIT_logo)
+        self.BCIT_logo.image = BCIT_logo
+
+        self.BCIT_logo.grid(row=1, column=1, padx=10, pady=10)
+
+
+
+        self.title_label = Label(self.title_frame, text='MAKE+', font=("Arial", 20))
+        self.title_label.grid(row=1, column=2, pady=10)
 
 
 

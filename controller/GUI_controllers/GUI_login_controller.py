@@ -19,22 +19,16 @@ class login_controller:
     """
 
     def __init__(self):
-        main_frame.current_frame = login_UI()
-        # main_frame.current_frame.login_but.config(command=lambda: self.Enter())
+        self.UI = login_UI()
+        self.UI.can_but.config(command=lambda: self.exit())
 
 
-    # def Enter(self):
-    #     acc_id = str(main_frame.current_frame.account_entry.get())
-    #     pin = str(main_frame.current_frame.pin_entry.get())
-    #     if login_model().check_login(acc_id, pin) == 0:
-    #         main_frame.current_ctr = option_controller(self.master, acc_id)
-    #     else:
-    #         message = 'Incorrect Login'
-    #         messagebox.showinfo(title='Error', message=message)
+    def exit(self):
+        self.UI.master.destroy()
 
 
 if __name__ == "__main__":
-    root = Tk()
-    frame = login_UI(root)
+    # root = Tk()
+    frame = login_UI()
     # ui = login_controller(root, frame)
     mainloop()

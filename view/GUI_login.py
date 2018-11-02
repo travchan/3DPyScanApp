@@ -32,7 +32,6 @@ class login_UI():
 
         # self.title_frame.configure(background='black')
 
-        self.master.configure(background='blue')
 
 
         # stretches the frames to the max (screenW)
@@ -75,12 +74,12 @@ class login_UI():
         self.botbut_frame.grid_columnconfigure(1, weight=1)
         self.botbut_frame.grid_columnconfigure(2, weight=0)
 
-        self.back_but = Button(self.botbut_frame, text='Cancel', width=10)
-        self.back_but.grid(row=1, column=0, padx=30, pady=15)
+        self.can_but = Button(self.botbut_frame, text='Cancel', width=10)
+        self.can_but.grid(row=1, column=0, padx=30, pady=15)
 
 
-        self.can_but = Button(self.botbut_frame, text='Get Scans', width=10)
-        self.can_but.grid(row=1, column=2, padx=30, pady=15)
+        self.get_but = Button(self.botbut_frame, text='Get Scans', width=10)
+        self.get_but.grid(row=1, column=2, padx=30, pady=15)
 
 
 if __name__ == "__main__":

@@ -15,7 +15,8 @@ class main_controller:
     def __init__(self, master):
         self.master = master
         self.main = main_frame(self.master)
-        main_frame.current_ctr = LoadGet_controller(self.main.UI_frame)
+        self.main.current_ctr = LoadGet_controller(self.main.UI_frame)
+
 
 if __name__ == "__main__":
 

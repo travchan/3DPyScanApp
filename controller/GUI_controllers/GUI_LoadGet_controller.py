@@ -2,8 +2,8 @@ from tkinter import *
 
 from view import LoadGet_UI
 from view import main_frame
-# from .GUI_butt_functions import Cancel_func
-# from .GUI_deposit_controller import dep_controller
+
+from .GUI_login_controller import login_controller
 # from .GUI_withdraw_controller import with_controller
 
 
@@ -20,38 +20,19 @@ class LoadGet_controller:
 
     def __init__(self, master):
         self.master = master
-        self.option = 'adas'
-        self.acc_id = 'adad'
-
-        main_frame.current_frame = LoadGet_UI(self.master)
-        # if self.option == "Withdraw":
-        #     main_frame.current_frame.cheq_but.config(command=lambda: self.To_withdraw_cheq(self.option))
-        #     main_frame.current_frame.save_but.config(command=lambda: self.To_withdraw_save(self.option))
-        # elif self.option == "Deposit":
-        #     main_frame.current_frame.cheq_but.config(command=lambda: self.To_deposit_cheq(self.option))
-        #     main_frame.current_frame.save_but.config(command=lambda: self.To_deposit_save(self.option))
-        #
-        # main_frame.current_frame.can_but.config(command=lambda: self.Cancel(self.master))
+        self.img = '../view/BCIT_Logo.png'
 
 
-    # def To_withdraw_cheq(self, option):
-    #     account = "Chequing"
-    #     main_frame.current_ctr = with_controller(self.master, option, account, self.acc_id)
-    #
-    # def To_withdraw_save(self, option):
-    #     account = "Savings"
-    #     main_frame.current_ctr = with_controller(self.master, option, account, self.acc_id)
-    #
-    # def To_deposit_cheq(self, option):
-    #     account = "Chequing"
-    #     main_frame.current_ctr = dep_controller(self.master, option, account, self.acc_id)
-    #
-    # def To_deposit_save(self, option):
-    #     account = "Savings"
-    #     main_frame.current_ctr = dep_controller(self.master, option, account, self.acc_id)
-    #
-    # def Cancel(self, master):
-    #     Cancel_func(master, self.acc_id)
+        main_frame.current_frame = LoadGet_UI(self.master, self.img)
+        main_frame.current_frame.get_but.config(command=lambda: self.openEmail())
+        # main_frame.current_frame.load_but.config(command=lambda: self.To_withdraw_save(self.option))
+        main_frame.current_frame.can_but.config(command=lambda: self.Exit())
+
+    def openEmail(self):
+        login_controller()
+
+    def Exit(self):
+        self.master.master.destroy()
 
 if __name__ == "__main__":
     root = Tk()

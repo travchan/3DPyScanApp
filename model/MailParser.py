@@ -27,14 +27,38 @@ class MailParser:
             self.host = 'imap.' + tempSplit[1]
 
     def __connectToServer(self):
+        """ Connects to email server
+        
+        Returns:
+            mailbox -- connection to email server database
+        """
+
         print('Connecting to ' + self.host)
         return imaplib.IMAP4_SSL(self.host)
 
     def __login(self, mailbox):
+        """ Uses login credentials to access email server
+        
+        Arguments:
+            mailbox {mailbox} -- connection to email server database
+        
+        Returns:
+            list -- list of all the emails in the inbox
+        """
+
         mailbox.login(self.email, self.password)
         return mailbox.list()
 
     def __downloadAttachments(self, email_message):
+        """ downloads attachments from the users email
+        
+        Arguments:
+            email_message {object} -- current email message
+        
+        Returns:
+            filepath -- filepath of the saved objects
+        """
+
         fileName = ""
         # downloading attachments
         for part in email_message.walk():
@@ -60,7 +84,10 @@ class MailParser:
             
 
     def getMail(self):
+        """ Parses through email to download attachments
+        """
 
+        
         mailBox = self.__connectToServer()
         self.__login(mailBox)
 

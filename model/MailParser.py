@@ -21,9 +21,9 @@ class MailParser:
 
         tempSplit = self.email.split('@')
 
-        if tempSplit[1] is 'outlook.com':
+        if tempSplit[1] == 'outlook.com':
             self.host = 'imap-mail.' +  tempSplit[1]
-        elif tempSplit[1] is 'gmail.com':
+        elif tempSplit[1] == 'gmail.com':
             self.host = 'imap.' + tempSplit[1]
 
     def __connectToServer(self):
@@ -46,7 +46,7 @@ class MailParser:
             fileName = part.get_filename()
 
             if bool(fileName):
-                filePath = os.path.join('C:/', fileName)
+                filePath = os.path.join('C:/Users/Public', fileName)
                 if not os.path.isfile(filePath):
                     fp = open(filePath, 'wb')
                     fp.write(part.get_payload(decode=True))
@@ -92,5 +92,5 @@ class MailParser:
         mailBox.logout()
 
 if __name__ == '__main__':
-    parser = MailParser('<email>', '<password>')
+    parser = MailParser('test', 'test')
     parser.getMail()

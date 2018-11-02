@@ -46,7 +46,7 @@ class MailParser:
             fileName = part.get_filename()
 
             if bool(fileName):
-                filePath = os.path.join('D:/test/', fileName)
+                filePath = os.path.join('C:/', fileName)
                 if not os.path.isfile(filePath):
                     fp = open(filePath, 'wb')
                     fp.write(part.get_payload(decode=True))

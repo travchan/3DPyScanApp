@@ -46,7 +46,11 @@ class MailParser:
             fileName = part.get_filename()
 
             if bool(fileName):
-                filePath = os.path.join('C:/Users/Public', fileName)
+                try:
+                    os.mkdir('C:/Users/Public/scans')
+                except:
+                    pass
+                filePath = os.path.join('C:/Users/Public/scans', fileName)
                 if not os.path.isfile(filePath):
                     fp = open(filePath, 'wb')
                     fp.write(part.get_payload(decode=True))
@@ -92,5 +96,5 @@ class MailParser:
         mailBox.logout()
 
 if __name__ == '__main__':
-    parser = MailParser('test', 'test')
+    parser = MailParser('<email>', '<password>')
     parser.getMail()

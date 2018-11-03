@@ -22,6 +22,12 @@ class MailParser:
         self.__assignHost(self.email)
 
     def __assignHost(self, email_str):
+        """ determines the host address based on the user email input
+        
+        Arguments:
+            email_str {string} -- email pulled from the user input
+        """
+
         email_str = self.email.split('@')
 
         if email_str[1] == 'outlook.com':

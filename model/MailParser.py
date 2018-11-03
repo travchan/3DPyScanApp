@@ -1,8 +1,8 @@
-import imaplib
+from imaplib import IMAP4_SSL
+from os import mkdir, path
+from base64 import b64encode, b64decode
+
 import email.header
-import os
-import sys
-import base64
 
 class MailParser:
     """ Parses emails for files sent by the Scanner application
@@ -17,7 +17,7 @@ class MailParser:
         """
 
         self.email = email
-        self.password = base64.b64encode(password.encode('ascii'))
+        self.password = b64encode(password.encode('ascii'))
 
         self.__assignHost(self.email)
 
@@ -43,7 +43,7 @@ class MailParser:
         """
 
         print('Connecting to ' + self.host)
-        return imaplib.IMAP4_SSL(self.host)
+        return IMAP4_SSL(self.host)
 
     def __login(self, mailbox):
         """ Uses login credentials to access email server
@@ -55,7 +55,7 @@ class MailParser:
             list -- list of all the emails in the inbox
         """
 
-        mailbox.login(self.email, base64.b64decode(self.password).decode('ascii'))
+        mailbox.login(self.email, b64decode(self.password).decode('ascii'))
         return mailbox.list()
 
     def __downloadAttachments(self, email_message):
@@ -80,11 +80,11 @@ class MailParser:
 
             if bool(fileName):
                 try:
-                    os.mkdir('C:/Users/Public/scans')
+                    mkdir('C:/Users/Public/scans')
                 except:
                     pass
-                filePath = os.path.join('C:/Users/Public/scans', fileName)
-                if not os.path.isfile(filePath):
+                filePath = path.join('C:/Users/Public/scans', fileName)
+                if not path.isfile(filePath):
                     fp = open(filePath, 'wb')
                     fp.write(part.get_payload(decode=True))
                     fp.close()
@@ -131,5 +131,5 @@ class MailParser:
         mailBox.logout()
 
 if __name__ == '__main__':
-    parser = MailParser('<email>', '<password>')
+    parser = MailParser('Pyscan3d@outlook.com', 'Student190')
     parser.getMail()

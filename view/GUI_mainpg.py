@@ -11,8 +11,8 @@ class main_frame:
 
     def __init__(self, UI_frame):
         self.master = UI_frame
-        self.screenW = '480'
-        self.screenH = '320'
+        self.screenW = str(int(self.master.winfo_screenwidth()/3))
+        self.screenH = str(int(self.master.winfo_screenheight()/3))
         self.master.title('PyScan')
         self.master.geometry(self.screenW + "x" + self.screenH)
         self.master.resizable(0, 0)

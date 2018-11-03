@@ -1,6 +1,7 @@
 from tkinter import *
 
-class UI:
+
+class UI():
 
     """
         The base UI where other UI inherits from.
@@ -9,11 +10,12 @@ class UI:
     """
 
     def __init__(self, master, img):
+        
         # self.ATM = ATM()
         self.master = master
         self.img = img
-        self.screenW = '480'
-        self.screenH = '320'
+        self.screenW = str(int(self.master.winfo_screenwidth()/3))
+        self.screenH = str(int(self.master.winfo_screenheight()/3))
         # self.master.title('ATM')
         # self.master.resizable(0, 0)
 

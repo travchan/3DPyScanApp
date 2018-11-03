@@ -12,8 +12,8 @@ class login_UI():
 
     def __init__(self):
         self.master = Tk()
-        self.screenW = '375'
-        self.screenH = '155'
+        self.screenW = str(int(self.master.winfo_screenwidth()/4))
+        self.screenH = str(int(self.master.winfo_screenheight()/5))
         self.master.geometry(self.screenW + "x" + self.screenH)
         self.master.resizable(0, 0)
         self.master.title('PyScan')

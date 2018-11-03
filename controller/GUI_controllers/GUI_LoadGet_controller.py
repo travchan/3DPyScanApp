@@ -20,7 +20,7 @@ class LoadGet_controller:
 
     def __init__(self, master):
         self.master = master
-        self.img = '../view/BCIT_Logo.png'
+        self.img = './view/BCIT_Logo.png'
 
 
         main_frame.current_frame = LoadGet_UI(self.master, self.img)

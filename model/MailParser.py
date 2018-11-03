@@ -2,6 +2,7 @@ import imaplib
 import email.header
 import os
 import sys
+import base64
 
 class MailParser:
     """ Parses emails for files sent by the Scanner application
@@ -11,20 +12,22 @@ class MailParser:
         """ Uses user input email and password to login to retrieve mesh files
         
         Arguments:
-            host {string} -- imap server
             email {string} -- user's email
             password {string} -- user's password
         """
 
         self.email = email
-        self.password = password
+        self.password = base64.b64encode(password.encode('ascii'))
 
-        tempSplit = self.email.split('@')
+        self.__assignHost(self.email)
 
-        if tempSplit[1] == 'outlook.com':
-            self.host = 'imap-mail.' +  tempSplit[1]
-        elif tempSplit[1] == 'gmail.com':
-            self.host = 'imap.' + tempSplit[1]
+    def __assignHost(self, email_str):
+        email_str = self.email.split('@')
+
+        if email_str[1] == 'outlook.com':
+            self.host = 'imap-mail.' + email_str[1]
+        elif email_str[1] == 'gmail.com':
+            self.host = 'imap.' + email_str[1]
 
     def __connectToServer(self):
         """ Connects to email server
@@ -46,7 +49,7 @@ class MailParser:
             list -- list of all the emails in the inbox
         """
 
-        mailbox.login(self.email, self.password)
+        mailbox.login(self.email, base64.b64decode(self.password).decode('ascii'))
         return mailbox.list()
 
     def __downloadAttachments(self, email_message):
@@ -87,7 +90,6 @@ class MailParser:
         """ Parses through email to download attachments
         """
 
-        
         mailBox = self.__connectToServer()
         self.__login(mailBox)
 

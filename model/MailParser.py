@@ -131,6 +131,6 @@ class MailParser:
         mailBox.logout()
 
 if __name__ == '__main__':
-    import credentials as creds
+    import credentials as creds # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore
     parser = MailParser(creds.OUTLOOK_EMAIL, creds.OUTLOOK_PASSWORD)
     parser.getMail()

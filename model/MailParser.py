@@ -131,5 +131,6 @@ class MailParser:
         mailBox.logout()
 
 if __name__ == '__main__':
-    parser = MailParser('email', 'passwd')
+    from credentials import EMAIL, PASSWORD
+    parser = MailParser(EMAIL, PASSWORD)
     parser.getMail()

@@ -131,5 +131,5 @@ class MailParser:
         mailBox.logout()
 
 if __name__ == '__main__':
-    parser = MailParser('Pyscan3d@outlook.com', 'Student190')
+    parser = MailParser('email', 'passwd')
     parser.getMail()

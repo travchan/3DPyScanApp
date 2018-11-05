@@ -3,14 +3,17 @@ from os import mkdir, path
 from base64 import b64encode, b64decode
 
 import email.header
-
+import os
+import sys
+import zipfile
+from os import mkdir, path
 class MailParser:
     """ Parses emails for files sent by the Scanner application
     """
 
     def __init__(self, email, password):
         """ Uses user input email and password to login to retrieve mesh files
-        
+
         Arguments:
             email {string} -- user's email
             password {string} -- user's password
@@ -37,7 +40,7 @@ class MailParser:
 
     def __connectToServer(self):
         """ Connects to email server
-        
+
         Returns:
             mailbox -- connection to email server database
         """
@@ -47,10 +50,10 @@ class MailParser:
 
     def __login(self, mailbox):
         """ Uses login credentials to access email server
-        
+
         Arguments:
             mailbox {mailbox} -- connection to email server database
-        
+
         Returns:
             list -- list of all the emails in the inbox
         """
@@ -60,37 +63,45 @@ class MailParser:
 
     def __downloadAttachments(self, email_message):
         """ downloads attachments from the users email
-        
+
         Arguments:
             email_message {object} -- current email message
-        
+
         Returns:
             filepath -- filepath of the saved objects
         """
 
         fileName = ""
         # downloading attachments
-        for part in email_message.walk():
-            # this part comes from the snipped I don't understand yet...
+        for part in email_message.walk():           
+            subjectline = email.header.decode_header(email_message['Subject'])[0][0].replace(" ", "_").replace(":", "_")
             if part.get_content_maintype() == 'multipart':
                 continue
             if part.get('Content-Disposition') is None:
                 continue
             fileName = part.get_filename()
-
-            if bool(fileName):
+            try:
+                mkdir('C:/Users/Public/scans')
+            except:
+                pass
+            if part.get_content_type() == 'application/zip':
                 try:
-                    mkdir('C:/Users/Public/scans')
-                except:
-                    pass
-                filePath = path.join('C:/Users/Public/scans', fileName)
-                if not path.isfile(filePath):
-                    fp = open(filePath, 'wb')
-                    fp.write(part.get_payload(decode=True))
-                    fp.close()
+                    open( path.join('C:/Users/Public/scans', '%s.zip' % subjectline), 'wb').write(part.get_payload(decode=True))
+                    unzipfile = zipfile.ZipFile(path.join('C:/Users/Public/scans', '%s.zip' % subjectline), 'r')
+                    unzipfile.extractall(
+                       'C:/Users/Public/scans')
+                    unzipfile.close()
+                    os.rename(path.join('C:/Users/Public/scans', 'Model.obj'),
+                           path.join('C:/Users/Public/scans','%s.obj' % subjectline))
+                    os.remove(path.join('C:/Users/Public/scans' , '%s.zip' % subjectline))
+                except FileExistsError:
+                    print('Error Duplicated File Name: "%s"' % subjectline)
+                    os.remove(path.join('C:/Users/Public/scans' , '%s.zip' % subjectline))
+                    os.remove(path.join('C:/Users/Public/scans' , 'Model.obj'))
 
-        return fileName    
-            
+
+        return fileName
+
 
     def getMail(self):
         """ Parses through email to download attachments
@@ -101,6 +112,7 @@ class MailParser:
 
         mailBox.select()
         searchQuery = '(BODY "SDK")'
+        unSeen = '(UNSEEN)'
 
         result, data = mailBox.uid('search', None, searchQuery)
         ids = data[0]
@@ -123,7 +135,7 @@ class MailParser:
 
             fileName = self.__downloadAttachments(email_message)
 
-            subject = str(email_message).split("Subject: ", 1)[1].split("\nTo:", 1)[0]
+            subject = str(email.header.decode_header(email_message['Subject'])[0][0])
             print('Downloaded "{file}" from email titled "{subject}" with UID {uid}.'.format(
                 file=fileName, subject=subject, uid=latest_email_uid.decode('utf-8')))
 

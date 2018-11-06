@@ -1,4 +1,5 @@
 from imaplib import IMAP4_SSL
+from imaplib import IMAP4
 from os import mkdir, path
 from base64 import b64encode, b64decode
 
@@ -45,8 +46,11 @@ class MailParser:
             mailbox -- connection to email server database
         """
 
-        print('Connecting to ' + self.host)
-        return IMAP4_SSL(self.host)
+        try:
+            print('Connecting to ' + self.host)
+            return IMAP4_SSL(self.host)
+        except AttributeError:
+            print('Invalid Host Address')
 
     def __login(self, mailbox):
         """ Uses login credentials to access email server
@@ -58,8 +62,12 @@ class MailParser:
             list -- list of all the emails in the inbox
         """
 
-        mailbox.login(self.email, b64decode(self.password).decode('ascii'))
-        return mailbox.list()
+        try:
+            mailbox.login(self.email, b64decode(self.password).decode('ascii'))
+            print('Login Successful')
+            return mailbox.list()
+        except IMAP4.error:
+            print('Login Failed.')
 
     def __downloadAttachments(self, email_message):
         """ downloads attachments from the users email
@@ -108,39 +116,45 @@ class MailParser:
         """
 
         mailBox = self.__connectToServer()
-        self.__login(mailBox)
+        try:
+            self.__login(mailBox)
+        
+            try: 
+                mailBox.select()
+                searchQuery = '(BODY "SDK")'
+                unSeen = '(UNSEEN)'
 
-        mailBox.select()
-        searchQuery = '(BODY "SDK")'
-        unSeen = '(UNSEEN)'
+                result, data = mailBox.uid('search', None, searchQuery)
+                ids = data[0]
+                # list of uids
+                id_list = ids.split()
 
-        result, data = mailBox.uid('search', None, searchQuery)
-        ids = data[0]
-        # list of uids
-        id_list = ids.split()
+                i = len(id_list)
+                for x in range(i):
+                    latest_email_uid = id_list[x]
 
-        i = len(id_list)
-        for x in range(i):
-            latest_email_uid = id_list[x]
+                    # fetch the email body (RFC822) for the given ID
+                    result, email_data = mailBox.uid('fetch', latest_email_uid, '(RFC822)')
+                    # I think I am fetching a bit too much here...
 
-            # fetch the email body (RFC822) for the given ID
-            result, email_data = mailBox.uid('fetch', latest_email_uid, '(RFC822)')
-            # I think I am fetching a bit too much here...
+                    raw_email = email_data[0][1]
 
-            raw_email = email_data[0][1]
+                    # converts byte literal to string removing b''
+                    raw_email_string = raw_email.decode('utf-8')
+                    email_message = email.message_from_string(raw_email_string)
 
-            # converts byte literal to string removing b''
-            raw_email_string = raw_email.decode('utf-8')
-            email_message = email.message_from_string(raw_email_string)
+                    fileName = self.__downloadAttachments(email_message)
 
-            fileName = self.__downloadAttachments(email_message)
+                    subject = str(email.header.decode_header(email_message['Subject'])[0][0])
+                    print('Downloaded "{file}" from email titled "{subject}" with UID {uid}.'.format(
+                        file=fileName, subject=subject, uid=latest_email_uid.decode('utf-8')))
 
-            subject = str(email.header.decode_header(email_message['Subject'])[0][0])
-            print('Downloaded "{file}" from email titled "{subject}" with UID {uid}.'.format(
-                file=fileName, subject=subject, uid=latest_email_uid.decode('utf-8')))
-
-        mailBox.close()
-        mailBox.logout()
+                mailBox.close()
+                mailBox.logout()
+            except IMAP4.error:
+                print('Unable to get mail. Please check your email and password.')
+        except AttributeError:
+            pass        
 
 if __name__ == '__main__':
     import credentials as creds # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore

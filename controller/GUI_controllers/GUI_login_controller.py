@@ -7,6 +7,7 @@ from view import login_UI
 from view import main_frame
 # from .GUI_option_controller import option_controller
 
+from model import MailParser
 
 class login_controller:
 
@@ -20,8 +21,16 @@ class login_controller:
 
     def __init__(self):
         self.UI = login_UI()
+        self.UI.get_but.config(command=self._login)
         self.UI.can_but.config(command=lambda: self.exit())
 
+    def _login(self):
+        user_email = str(self.UI.account_entry.get())
+        user_pass = str(self.UI.pin_entry.get())
+
+        mail = MailParser(user_email, user_pass)
+        mail.getMail()
+        print("Good")
 
     def exit(self):
         self.UI.master.destroy()

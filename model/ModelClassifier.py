@@ -1,5 +1,6 @@
 import numpy as np
 import trimesh as tmesh
+import matplotlib.pyplot as plt
 
 class ModelClassifier:
     """ Uses the trimesh and numpy libraries to extract .ply data for model classification
@@ -18,11 +19,13 @@ class ModelClassifier:
         """ placeholder function
         """
 
-        self.plyObject.show()
+        plt.hist(self.plyObject.vertices)
+        plt.grid(True)
+        plt.show()
     
     def classify(self):
         pass
     
 if __name__ == "__main__":
-    mesh = ModelClassifier('model/scans/Model.ply')
+    mesh = ModelClassifier('model/scans/scans2/Wood_Cube_15sec_3/Model.obj')
     mesh.displayModel()

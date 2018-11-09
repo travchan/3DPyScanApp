@@ -7,9 +7,7 @@ import email.header
 import os
 import sys
 import zipfile
-from os import mkdir, path
 import glob
-
 
 class MailParser:
     """ Parses emails for files sent by the Scanner application
@@ -81,7 +79,7 @@ class MailParser:
         Returns:
             filepath -- filepath of the saved objects
         """
-
+        directory = "C:/Users/Public/scans"
         fileName = ""
         # downloading attachments
         for part in email_message.walk():
@@ -93,34 +91,28 @@ class MailParser:
                 continue
             fileName = part.get_filename()
             try:
-                mkdir('C:/Users/Public/scans')
+                mkdir(directory)
             except:
                 pass
             if part.get_content_type() == 'application/zip':
-                open(path.join('C:/Users/Public/scans', '%s.zip' %
+                open(path.join(directory, '%s.zip' %
                                 subjectline), 'wb').write(part.get_payload(decode=True))
                 unzipfile = zipfile.ZipFile(
-                    path.join('C:/Users/Public/scans', '%s.zip' % subjectline), 'r')
+                    path.join(directory, '%s.zip' % subjectline), 'r')
                 unzipfile.extractall(
-                    'C:/Users/Public/scans')
+                    directory)
                 unzipfile.close()
                 try:
-                    num = int(glob.glob('C:/Users/Public/scans/{0}(?).obj'.format(subjectline))[-1].split('(')[1].split(')')[0]) + 1
+                    num = int(glob.glob(path.join(directory, '{0}(?).obj').format(subjectline))[-1].split('(')[1].split(')')[0]) + 1
                 except IndexError:
                     num = 0
-                os.rename(path.join('C:/Users/Public/scans', 'Model.obj'),
-                            path.join('C:/Users/Public/scans', '{0}({1}).obj'.format(subjectline, num)))
-                os.remove(path.join('C:/Users/Public/scans',
+                os.rename(path.join(directory, 'Model.obj'),
+                            path.join(directory, '{0}({1}).obj'.format(subjectline, num)))
+                os.remove(path.join(directory,
                                     '%s.zip' % subjectline))
-                try:
-                    os.remove('C:/Users/Public/scans/Model.mtl')
-                except:
-                    pass
-                try:
-                    os.remove('C:/Users/Public/scans/Model.jpg')
-                except:
-                    pass
-
+                filelist = glob.glob(path.join(directory, '*.mtl')) + glob.glob(path.join(directory, '*.jpg'))
+                for i in filelist:
+                    os.remove(i)
                 return fileName
 
     def getMail(self):

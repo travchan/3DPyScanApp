@@ -15,7 +15,7 @@ class UI():
         self.master = master
         self.img = img
         self.screenW = str(int(self.master.winfo_screenwidth()/3))
-        self.screenH = str(int(self.master.winfo_screenheight()/3))
+        self.screenH = str(int(self.master.winfo_screenheight()/2))
         # self.master.title('ATM')
         # self.master.resizable(0, 0)
 
@@ -63,5 +63,6 @@ class UI():
 
 if __name__ == "__main__":
     root = Tk()
-    UI(root)
+    img = ""
+    UI(root, img)
     mainloop()

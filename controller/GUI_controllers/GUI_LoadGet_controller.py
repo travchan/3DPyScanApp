@@ -4,7 +4,7 @@ from view import LoadGet_UI
 from view import main_frame
 
 from .GUI_login_controller import login_controller
-# from .GUI_withdraw_controller import with_controller
+from .GUI_LoadScan_controller import LoadScan_controller
 
 
 class LoadGet_controller:
@@ -24,12 +24,18 @@ class LoadGet_controller:
 
 
         main_frame.current_frame = LoadGet_UI(self.master, self.img)
+
         main_frame.current_frame.get_but.config(command=lambda: self.openEmail())
+        main_frame.current_frame.load_but.config(command=lambda: self.openLoad())
+
         # main_frame.current_frame.load_but.config(command=lambda: self.To_withdraw_save(self.option))
         main_frame.current_frame.can_but.config(command=lambda: self.Exit())
 
     def openEmail(self):
         login_controller()
+
+    def openLoad(self):
+        LoadScan_controller(self.master)
 
     def Exit(self):
         self.master.master.destroy()

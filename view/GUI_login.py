@@ -30,10 +30,6 @@ class login_UI():
         self.mid_frame = Frame(self.master, width=self.screenW)
         self.botbut_frame = Frame(self.master, width=self.screenW)
 
-        # self.title_frame.configure(background='black')
-
-
-
         # stretches the frames to the max (screenW)
         self.title_frame.grid(row=0, sticky='nsew')
         self.mid_frame.grid(row=1, sticky='nsew')

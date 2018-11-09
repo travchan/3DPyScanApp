@@ -136,7 +136,7 @@ class MailParser:
                 searchQuery = '(BODY "SDK")'
                 unSeen = '(UNSEEN)'
 
-                result, data = mailBox.uid('search', None, searchQuery)
+                result, data = mailBox.uid('search', None, searchQuery, unSeen)
                 ids = data[0]
                 # list of uids
                 id_list = ids.split()

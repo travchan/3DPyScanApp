@@ -14,18 +14,12 @@ class ModelClassifier:
         """
 
         self.plyObject = tmesh.load(model)
-
-    def displayModel(self):
-        """ placeholder function
-        """
-
+    
+    def classify(self):
         plt.hist(self.plyObject.vertices)
         plt.grid(True)
         plt.show()
     
-    def classify(self):
-        pass
-    
 if __name__ == "__main__":
     mesh = ModelClassifier('model/scans/scans2/Wood_Cube_15sec_3/Model.obj')
-    mesh.displayModel()
+    mesh.classify()

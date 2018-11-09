@@ -113,7 +113,7 @@ class MailParser:
                     remove(i)
                 return fileName
 
-    def getMail(self):
+    def getMail(self,scan_type):
         """ Parses through email to download attachments
         """
 
@@ -125,8 +125,10 @@ class MailParser:
                 mailBox.select()
                 searchQuery = '(BODY "SDK")'
                 unSeen = '(UNSEEN)'
-
-                result, data = mailBox.uid('search', None, searchQuery, unSeen)
+                if scan_type == 1:
+                    result, data = mailBox.uid('search', None, searchQuery)
+                else: 
+                    result, data = mailBox.uid('search', None, searchQuery, unSeen)
                 ids = data[0]
                 # list of uids
                 id_list = ids.split()
@@ -163,4 +165,4 @@ if __name__ == '__main__':
     # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore
     import credentials as creds
     parser = MailParser(creds.GMAIL, creds.GMAIL_PASSWORD)
-    parser.getMail()
+    parser.getMail(0)

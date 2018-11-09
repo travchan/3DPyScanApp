@@ -31,10 +31,13 @@ class MailParser:
 
         email_str = self.email.split('@')
 
-        if email_str[1] == 'outlook.com':
-            self.host = 'imap-mail.' + email_str[1]
-        elif email_str[1] == 'gmail.com':
-            self.host = 'imap.' + email_str[1]
+        try:
+            if email_str[1] == 'outlook.com':
+                self.host = 'imap-mail.' + email_str[1]
+            elif email_str[1] == 'gmail.com':
+                self.host = 'imap.' + email_str[1]
+        except IndexError:
+            print("Incomplete Email")
 
     def __connectToServer(self):
         """ Connects to email server
@@ -119,7 +122,7 @@ class MailParser:
 
         mailBox = self.__connectToServer()
         try:
-            self.__login(mailBox)
+            log_stat = self.__login(mailBox)
 
             try:
                 mailBox.select()
@@ -153,9 +156,10 @@ class MailParser:
                         email_message['Subject'])[0][0])
                     print('Downloaded "{file}" from email titled "{subject}" with UID {uid}.'.format(
                         file=fileName, subject=subject, uid=latest_email_uid.decode('utf-8')))
-
+    
                 mailBox.close()
                 mailBox.logout()
+                return log_stat
             except IMAP4.error:
                 print('Unable to get mail. Please check your email and password.')
         except AttributeError:

@@ -8,6 +8,9 @@ import os
 import sys
 import zipfile
 from os import mkdir, path
+import glob
+
+
 class MailParser:
     """ Parses emails for files sent by the Scanner application
     """
@@ -27,7 +30,7 @@ class MailParser:
 
     def __assignHost(self, email_str):
         """ determines the host address based on the user email input
-        
+
         Arguments:
             email_str {string} -- email pulled from the user input
         """
@@ -81,8 +84,9 @@ class MailParser:
 
         fileName = ""
         # downloading attachments
-        for part in email_message.walk():           
-            subjectline = email.header.decode_header(email_message['Subject'])[0][0].replace(" ", "_").replace(":", "_")
+        for part in email_message.walk():
+            subjectline = email.header.decode_header(email_message['Subject'])[
+                0][0].replace(" ", "_").replace(":", "_")
             if part.get_content_maintype() == 'multipart':
                 continue
             if part.get('Content-Disposition') is None:
@@ -93,23 +97,31 @@ class MailParser:
             except:
                 pass
             if part.get_content_type() == 'application/zip':
+                open(path.join('C:/Users/Public/scans', '%s.zip' %
+                                subjectline), 'wb').write(part.get_payload(decode=True))
+                unzipfile = zipfile.ZipFile(
+                    path.join('C:/Users/Public/scans', '%s.zip' % subjectline), 'r')
+                unzipfile.extractall(
+                    'C:/Users/Public/scans')
+                unzipfile.close()
                 try:
-                    open( path.join('C:/Users/Public/scans', '%s.zip' % subjectline), 'wb').write(part.get_payload(decode=True))
-                    unzipfile = zipfile.ZipFile(path.join('C:/Users/Public/scans', '%s.zip' % subjectline), 'r')
-                    unzipfile.extractall(
-                       'C:/Users/Public/scans')
-                    unzipfile.close()
-                    os.rename(path.join('C:/Users/Public/scans', 'Model.obj'),
-                           path.join('C:/Users/Public/scans','%s.obj' % subjectline))
-                    os.remove(path.join('C:/Users/Public/scans' , '%s.zip' % subjectline))
-                except FileExistsError:
-                    print('Error Duplicated File Name: "%s"' % subjectline)
-                    os.remove(path.join('C:/Users/Public/scans' , '%s.zip' % subjectline))
-                    os.remove(path.join('C:/Users/Public/scans' , 'Model.obj'))
+                    num = int(glob.glob('C:/Users/Public/scans/{0}(?).obj'.format(subjectline))[-1].split('(')[1].split(')')[0]) + 1
+                except IndexError:
+                    num = 0
+                os.rename(path.join('C:/Users/Public/scans', 'Model.obj'),
+                            path.join('C:/Users/Public/scans', '{0}({1}).obj'.format(subjectline, num)))
+                os.remove(path.join('C:/Users/Public/scans',
+                                    '%s.zip' % subjectline))
+                try:
+                    os.remove('C:/Users/Public/scans/Model.mtl')
+                except:
+                    pass
+                try:
+                    os.remove('C:/Users/Public/scans/Model.jpg')
+                except:
+                    pass
 
-
-        return fileName
-
+                return fileName
 
     def getMail(self):
         """ Parses through email to download attachments
@@ -118,8 +130,8 @@ class MailParser:
         mailBox = self.__connectToServer()
         try:
             self.__login(mailBox)
-        
-            try: 
+
+            try:
                 mailBox.select()
                 searchQuery = '(BODY "SDK")'
                 unSeen = '(UNSEEN)'
@@ -134,7 +146,8 @@ class MailParser:
                     latest_email_uid = id_list[x]
 
                     # fetch the email body (RFC822) for the given ID
-                    result, email_data = mailBox.uid('fetch', latest_email_uid, '(RFC822)')
+                    result, email_data = mailBox.uid(
+                        'fetch', latest_email_uid, '(RFC822)')
                     # I think I am fetching a bit too much here...
 
                     raw_email = email_data[0][1]
@@ -145,7 +158,8 @@ class MailParser:
 
                     fileName = self.__downloadAttachments(email_message)
 
-                    subject = str(email.header.decode_header(email_message['Subject'])[0][0])
+                    subject = str(email.header.decode_header(
+                        email_message['Subject'])[0][0])
                     print('Downloaded "{file}" from email titled "{subject}" with UID {uid}.'.format(
                         file=fileName, subject=subject, uid=latest_email_uid.decode('utf-8')))
 
@@ -154,9 +168,11 @@ class MailParser:
             except IMAP4.error:
                 print('Unable to get mail. Please check your email and password.')
         except AttributeError:
-            pass        
+            pass
+
 
 if __name__ == '__main__':
-    import credentials as creds # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore
-    parser = MailParser(creds.OUTLOOK_EMAIL, creds.OUTLOOK_PASSWORD)
+    # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore
+    import credentials as creds
+    parser = MailParser(creds.GMAIL, creds.GMAIL_PASSWORD)
     parser.getMail()

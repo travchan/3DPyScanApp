@@ -1,15 +1,9 @@
-from imaplib import IMAP4_SSL
-from imaplib import IMAP4
-from os import mkdir, path
+from imaplib import IMAP4_SSL, IMAP4
+from os import mkdir, path, rename, remove
 from base64 import b64encode, b64decode
-
+from glob import glob
+from zipfile import ZipFile
 import email.header
-import os
-import sys
-import zipfile
-from os import mkdir, path
-import glob
-
 
 class MailParser:
     """ Parses emails for files sent by the Scanner application
@@ -81,7 +75,7 @@ class MailParser:
         Returns:
             filepath -- filepath of the saved objects
         """
-
+        directory = "C:/Users/Public/scans"
         fileName = ""
         # downloading attachments
         for part in email_message.walk():
@@ -93,34 +87,30 @@ class MailParser:
                 continue
             fileName = part.get_filename()
             try:
-                mkdir('C:/Users/Public/scans')
+                mkdir(directory)
             except:
                 pass
             if part.get_content_type() == 'application/zip':
-                open(path.join('C:/Users/Public/scans', '%s.zip' %
-                                subjectline), 'wb').write(part.get_payload(decode=True))
-                unzipfile = zipfile.ZipFile(
-                    path.join('C:/Users/Public/scans', '%s.zip' % subjectline), 'r')
+                open(path.join(directory, '%s.zip' %
+                               subjectline), 'wb').write(part.get_payload(decode=True))
+                unzipfile = ZipFile(
+                    path.join(directory, '%s.zip' % subjectline), 'r')
                 unzipfile.extractall(
-                    'C:/Users/Public/scans')
+                    directory)
                 unzipfile.close()
                 try:
-                    num = int(glob.glob('C:/Users/Public/scans/{0}(?).obj'.format(subjectline))[-1].split('(')[1].split(')')[0]) + 1
+                    num = int(glob(path.join(directory, '{0}(?).obj').format(
+                        subjectline))[-1].split('(')[1].split(')')[0]) + 1
                 except IndexError:
                     num = 0
-                os.rename(path.join('C:/Users/Public/scans', 'Model.obj'),
-                            path.join('C:/Users/Public/scans', '{0}({1}).obj'.format(subjectline, num)))
-                os.remove(path.join('C:/Users/Public/scans',
-                                    '%s.zip' % subjectline))
-                try:
-                    os.remove('C:/Users/Public/scans/Model.mtl')
-                except:
-                    pass
-                try:
-                    os.remove('C:/Users/Public/scans/Model.jpg')
-                except:
-                    pass
-
+                rename(path.join(directory, 'Model.obj'),
+                       path.join(directory, '{0}({1}).obj'.format(subjectline, num)))
+                remove(path.join(directory,
+                                 '%s.zip' % subjectline))
+                filelist = glob(path.join(directory, '*.mtl')) + \
+                    glob(path.join(directory, '*.jpg'))
+                for i in filelist:
+                    remove(i)
                 return fileName
 
     def getMail(self):
@@ -148,7 +138,6 @@ class MailParser:
                     # fetch the email body (RFC822) for the given ID
                     result, email_data = mailBox.uid(
                         'fetch', latest_email_uid, '(RFC822)')
-                    # I think I am fetching a bit too much here...
 
                     raw_email = email_data[0][1]
 
@@ -169,7 +158,6 @@ class MailParser:
                 print('Unable to get mail. Please check your email and password.')
         except AttributeError:
             pass
-
 
 if __name__ == '__main__':
     # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore

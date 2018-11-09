@@ -1,13 +1,9 @@
-from imaplib import IMAP4_SSL
-from imaplib import IMAP4
-from os import mkdir, path
+from imaplib import IMAP4_SSL, IMAP4
+from os import mkdir, path, rename, remove
 from base64 import b64encode, b64decode
-
+from glob import glob
+from zipfile import ZipFile
 import email.header
-import os
-import sys
-import zipfile
-import glob
 
 class MailParser:
     """ Parses emails for files sent by the Scanner application
@@ -96,23 +92,25 @@ class MailParser:
                 pass
             if part.get_content_type() == 'application/zip':
                 open(path.join(directory, '%s.zip' %
-                                subjectline), 'wb').write(part.get_payload(decode=True))
-                unzipfile = zipfile.ZipFile(
+                               subjectline), 'wb').write(part.get_payload(decode=True))
+                unzipfile = ZipFile(
                     path.join(directory, '%s.zip' % subjectline), 'r')
                 unzipfile.extractall(
                     directory)
                 unzipfile.close()
                 try:
-                    num = int(glob.glob(path.join(directory, '{0}(?).obj').format(subjectline))[-1].split('(')[1].split(')')[0]) + 1
+                    num = int(glob(path.join(directory, '{0}(?).obj').format(
+                        subjectline))[-1].split('(')[1].split(')')[0]) + 1
                 except IndexError:
                     num = 0
-                os.rename(path.join(directory, 'Model.obj'),
-                            path.join(directory, '{0}({1}).obj'.format(subjectline, num)))
-                os.remove(path.join(directory,
-                                    '%s.zip' % subjectline))
-                filelist = glob.glob(path.join(directory, '*.mtl')) + glob.glob(path.join(directory, '*.jpg'))
+                rename(path.join(directory, 'Model.obj'),
+                       path.join(directory, '{0}({1}).obj'.format(subjectline, num)))
+                remove(path.join(directory,
+                                 '%s.zip' % subjectline))
+                filelist = glob(path.join(directory, '*.mtl')) + \
+                    glob(path.join(directory, '*.jpg'))
                 for i in filelist:
-                    os.remove(i)
+                    remove(i)
                 return fileName
 
     def getMail(self):
@@ -140,7 +138,6 @@ class MailParser:
                     # fetch the email body (RFC822) for the given ID
                     result, email_data = mailBox.uid(
                         'fetch', latest_email_uid, '(RFC822)')
-                    # I think I am fetching a bit too much here...
 
                     raw_email = email_data[0][1]
 
@@ -161,7 +158,6 @@ class MailParser:
                 print('Unable to get mail. Please check your email and password.')
         except AttributeError:
             pass
-
 
 if __name__ == '__main__':
     # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore

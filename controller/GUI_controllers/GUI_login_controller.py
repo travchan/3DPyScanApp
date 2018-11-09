@@ -26,13 +26,16 @@ class login_controller:
         self.UI = login_UI()
         self.UI.get_but.config(command=self._login)
         self.UI.can_but.config(command=lambda: self.exit())
+        self.UI.radio_but_new.config(command=lambda:self.UI.var.set(0))
+        self.UI.radio_but_all.config(command=lambda:self.UI.var.set(1))
 
     def _login(self):
         user_email = str(self.UI.account_entry.get())
         user_pass = str(self.UI.pin_entry.get())
+        scan_type = str(self.UI.var.get())
 
         mail = MailParser(user_email, user_pass)
-        log_status = mail.getMail()
+        log_status = mail.getMail(int(scan_type))
         
         if log_status == None:
             self.error = login_error()

@@ -13,7 +13,7 @@ class login_UI():
     def __init__(self):
         self.master = Tk()
         self.screenW = str(int(self.master.winfo_screenwidth()/4))
-        self.screenH = str(int(self.master.winfo_screenheight()/5))
+        self.screenH = str(int(self.master.winfo_screenheight()/4))
         self.master.geometry(self.screenW + "x" + self.screenH)
         self.master.resizable(0, 0)
         self.master.title('PyScan')
@@ -46,19 +46,27 @@ class login_UI():
 
         # #----------------ENTRY FRAME---------------------------------
         # makes boarders to center the input frame
+        self.var = IntVar()
+        self.var.set(0)
+  
         self.mid_frame.grid_rowconfigure(0, weight=1)
         self.mid_frame.grid_rowconfigure(3, weight=1)
 
         self.mid_frame.grid_columnconfigure(0, weight=1)
         self.mid_frame.grid_columnconfigure(3, weight=1)
-
+        
         self.account_label = Label(self.mid_frame, text='Email :')
         self.account_entry = Entry(self.mid_frame, width=30)
         self.pin_label = Label(self.mid_frame, text='Password :')
         self.pin_entry = Entry(self.mid_frame, width=30, show="*")
+        self.radio_but_all = Radiobutton(self.mid_frame, text="All Scans", variable=self.var, value=0, indicatoron=1)
+        self.radio_but_new = Radiobutton(self.mid_frame, text="New Scans", variable=self.var, value=1, indicatoron=1)
+        self.radio_but_new.select()
 
         self.account_label.grid(row=1, column=0, sticky=E, padx=5, pady=5)
         self.account_entry.grid(row=1, column=1, sticky=E, padx=5, pady=5)
+        self.radio_but_all.grid(row=3, column=1, sticky=E, padx=5, pady=5)
+        self.radio_but_new.grid(row=3, column=0, sticky=E, padx=5, pady=5)
         self.pin_label.grid(row=2, column=0, sticky=E, padx=5, pady=5)
         self.pin_entry.grid(row=2, column=1, sticky=E, padx=5, pady=5)
 

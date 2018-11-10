@@ -54,8 +54,6 @@ class UI():
 
         self.BCIT_logo.grid(row=1, column=1, padx=10, pady=10)
 
-
-
         self.title_label = Label(self.title_frame, text='MAKE+', font=("Arial", 20))
         self.title_label.grid(row=1, column=2, pady=10)
 

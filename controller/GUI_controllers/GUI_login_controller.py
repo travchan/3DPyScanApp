@@ -22,17 +22,20 @@ class login_controller:
         gets the login info
     """
 
-    def __init__(self):
-        self.UI = login_UI()
-        self.UI.get_but.config(command=self._login)
-        self.UI.can_but.config(command=lambda: self.exit())
-        self.UI.radio_but_new.config(command=lambda:self.UI.var.set(0))
-        self.UI.radio_but_all.config(command=lambda:self.UI.var.set(1))
+    def __init__(self, master):
+        self.master = master
+        self.img = './view/BCIT_Logo.png'
+        main_frame.current_frame = login_UI(self.master, self.img)
+
+        main_frame.current_frame.get_but.config(command=self._login)
+        main_frame.current_frame.can_but.config(command=lambda: self.exit())
+        main_frame.current_frame.radio_but_new.config(command=lambda: main_frame.current_frame.var.set(1))
+        main_frame.current_frame.radio_but_all.config(command=lambda: main_frame.current_frame.var.set(0))
 
     def _login(self):
-        user_email = str(self.UI.account_entry.get())
-        user_pass = str(self.UI.pin_entry.get())
-        scan_type = str(self.UI.var.get())
+        user_email = str(main_frame.current_frame.account_entry.get())
+        user_pass = str(main_frame.current_frame.pin_entry.get())
+        scan_type = str(main_frame.current_frame.var.get())
 
         mail = MailParser(user_email, user_pass)
         log_status = mail.getMail(int(scan_type))
@@ -46,8 +49,8 @@ class login_controller:
             self.exit()
 
     def exit(self):
-        self.UI.master.destroy()
-
+        from .GUI_LoadGet_controller import LoadGet_controller
+        LoadGet_controller(self.master)
 
 if __name__ == "__main__":
     # root = Tk()

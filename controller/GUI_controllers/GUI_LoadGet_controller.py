@@ -32,7 +32,7 @@ class LoadGet_controller:
         main_frame.current_frame.can_but.config(command=lambda: self.Exit())
 
     def openEmail(self):
-        login_controller()
+        login_controller(self.master)
 
     def openLoad(self):
         LoadScan_controller(self.master)

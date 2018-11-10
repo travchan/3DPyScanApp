@@ -46,8 +46,8 @@ class login_UI(UI):
         self.pin_entry.grid(row=2, column=1, sticky=E, padx=5, pady=5)
 
 
-        self.radio_but_all = Radiobutton(self.account_frame, text="All Scans", variable=self.var, value=0, indicatoron=1)
-        self.radio_but_new = Radiobutton(self.account_frame, text="New Scans", variable=self.var, value=1, indicatoron=1)
+        self.radio_but_new = Radiobutton(self.account_frame, text="New Scans", variable=self.var, value=0, indicatoron=1)
+        self.radio_but_all = Radiobutton(self.account_frame, text="All Scans", variable=self.var, value=1, indicatoron=1)
         self.radio_but_new.select()
 
         self.radio_but_all.grid(row=3, column=1, sticky=E, padx=5, pady=10)

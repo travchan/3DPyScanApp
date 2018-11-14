@@ -3,6 +3,7 @@ from tkinter.filedialog import askopenfilename
 
 from view import LoadScan_UI
 from view import main_frame
+from model import ModelClassifier
 
 
 class LoadScan_controller:
@@ -27,8 +28,9 @@ class LoadScan_controller:
 
     def openFile(self):
         filename = askopenfilename()
-        print(filename)
         main_frame.current_frame.log_File_Path.set(filename)
+        ModelClassifier(filename).classify()
+
 
 
 

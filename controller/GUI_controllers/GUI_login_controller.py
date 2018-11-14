@@ -29,8 +29,8 @@ class login_controller:
 
         main_frame.current_frame.get_but.config(command=self._login)
         main_frame.current_frame.can_but.config(command=lambda: self.exit())
-        main_frame.current_frame.radio_but_new.config(command=lambda: main_frame.current_frame.var.set(1))
-        main_frame.current_frame.radio_but_all.config(command=lambda: main_frame.current_frame.var.set(0))
+        main_frame.current_frame.radio_but_new.config(command=lambda: main_frame.current_frame.var.set(0))
+        main_frame.current_frame.radio_but_all.config(command=lambda: main_frame.current_frame.var.set(1))
 
     def _login(self):
         user_email = str(main_frame.current_frame.account_entry.get())

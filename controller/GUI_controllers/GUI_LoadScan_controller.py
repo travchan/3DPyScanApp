@@ -27,7 +27,7 @@ class LoadScan_controller:
         main_frame.current_frame.can_but.config(command=lambda: self.Exit())
 
     def openFile(self):
-        filename = askopenfilename()
+        filename = askopenfilename(initialdir="C:/Users/public/scans/", title="Select a file")
         main_frame.current_frame.log_File_Path.set(filename)
         ModelClassifier(filename).classify()
 

@@ -1,6 +1,5 @@
 import numpy as np
 import trimesh as tmesh
-import matplotlib.pyplot as plt
 
 
 class ModelClassifier:
@@ -38,7 +37,6 @@ class ModelClassifier:
 
         for i in range(len(vertices) - 1):
             if vertices[i][1] == starting_coords[1] and vertices[i][2] == starting_coords[2]:
-
                 total_y_arr.append(vertices[i][0])
 
         total_y = 0
@@ -50,6 +48,10 @@ class ModelClassifier:
     @staticmethod
     def _get_average(lst):
         return sum(lst) / len(lst)
+
+    @staticmethod
+    def _get_euclidean_distance(a, b):
+        return np.linalg.norm(a - b)
 
 
 if __name__ == "__main__":

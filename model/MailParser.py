@@ -170,7 +170,6 @@ class MailParser:
         mailBox = self.__connectToServer()
         try:
             log_stat = self.__login(mailBox)
-
             try:
                 mailBox.select()
                 searchQuery = '(BODY "SDK")'
@@ -192,7 +191,7 @@ class MailParser:
 
                     subject = str(email.header.decode_header(
                         email_message['Subject'])[0][0])
-                    list.append({'id': latest_email_uid, 'title': subject})
+                    list.append({'id': latest_email_uid.decode('utf-8'), 'title': subject})
                 mailBox.close()
                 mailBox.logout()
                 return list

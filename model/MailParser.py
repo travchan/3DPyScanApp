@@ -145,7 +145,7 @@ class MailParser:
                     list.append(subject)
                 mailBox.close()
                 mailBox.logout()
-                return list
+                return [log_stat, list]
             except IMAP4.error:
                 print('Unable to get mail. Please check your email and password.')
         except AttributeError:

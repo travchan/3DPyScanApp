@@ -38,15 +38,16 @@ class login_controller:
         scan_type = str(main_frame.current_frame.var.get())
 
         mail = MailParser(user_email, user_pass)
-        log_status = mail.getMail(int(scan_type))
+        mail_list = mail.get_scan()
+        # log_status = mail.getMail(int(scan_type))
         
-        if log_status == None:
-            self.error = login_error()
-            self.error.ok_but.config(command=lambda: self.error.master.destroy())
-        else:
-            self.success = login_success()
-            self.success.ok_but.config(command=lambda: self.success.master.destroy())
-            self.exit()
+        # if log_status == None:
+        #     self.error = login_error()
+        #     self.error.ok_but.config(command=lambda: self.error.master.destroy())
+        # else:
+        #     self.success = login_success()
+        #     self.success.ok_but.config(command=lambda: self.success.master.destroy())
+        #     self.exit()
 
     def exit(self):
         from .GUI_LoadGet_controller import LoadGet_controller

@@ -3,7 +3,6 @@ import trimesh as tmesh
 from random import randint
 import matplotlib.pyplot as plt
 
-
 class ModelClassifier:
     """ Uses the trimesh and numpy libraries to extract .ply data for model classification
     """
@@ -20,8 +19,10 @@ class ModelClassifier:
 
     def classify(self):
         self.generate_dist_graph_data()
-        plt.hist(self.distribution_data)
-        plt.grid(True)
+        plt.hist(self.distribution_data, histtype='step', bins=40)
+        plt.title('Shape Distribution Graph')
+        plt.ylabel('Frequency')
+        plt.xlabel('Distance')
         plt.show()
 
     def _calc_length(self):

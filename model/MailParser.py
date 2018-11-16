@@ -142,14 +142,21 @@ class MailParser:
                     list.insert(0,subject)
                 # mailBox.close()
                 # mailBox.logout()
-                return (list,email_message)
+                return [log_stat,list,email_message,mailBox]
             except IMAP4.error:
                 print('Unable to get mail. Please check your email and password.')
         except AttributeError:
             pass
+
+    def logout(self, mailBox):
+        mailBox.close()
+        print('logout')        
+        mailBox.logout()
+
 if __name__ == '__main__':
     # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore
     import credentials as creds
     parser = MailParser(creds.OUTLOOK_EMAIL, creds.GMAIL_PASSWORD)
     i = parser.get_scan()
-    parser.downloadAttachments(i[1], ['Cube_Test03_BoxSize_Small', 'Cube_Test02_BoxSize_Medium', 'Cube_Test_01_BoxSize_Large'])
+    parser.downloadAttachments(i[2], ['Cube_Test03_BoxSize_Small', 'Cube_Test02_BoxSize_Medium', 'Cube_Test_01_BoxSize_Large'])
+    parser.logout(i[-1])

@@ -165,8 +165,43 @@ class MailParser:
         except AttributeError:
             pass
 
+    def get_scan(self):
+        list = []
+        mailBox = self.__connectToServer()
+        try:
+            log_stat = self.__login(mailBox)
+
+            try:
+                mailBox.select()
+                searchQuery = '(BODY "SDK")'
+                result, data = mailBox.uid('search', None, searchQuery)
+                ids = data[0]
+                # list of uids
+                id_list = ids.split()
+
+                i = len(id_list)
+                for x in range(i):
+                    latest_email_uid = id_list[x]
+
+                    # fetch the email body (RFC822) for the given ID
+                    result, email_data = mailBox.uid(
+                        'fetch', latest_email_uid, '(RFC822)')
+                    raw_email = email_data[0][1]
+                    raw_email_string = raw_email.decode('utf-8')
+                    email_message = email.message_from_string(raw_email_string)
+
+                    subject = str(email.header.decode_header(
+                        email_message['Subject'])[0][0])
+                    list.append({'id': latest_email_uid, 'title': subject})
+                mailBox.close()
+                mailBox.logout()
+                return list
+            except IMAP4.error:
+                print('Unable to get mail. Please check your email and password.')
+        except AttributeError:
+            pass
 if __name__ == '__main__':
     # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore
     import credentials as creds
     parser = MailParser(creds.GMAIL, creds.GMAIL_PASSWORD)
-    parser.getMail(0)
+    print(parser.get_scan())

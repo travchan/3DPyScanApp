@@ -1,5 +1,7 @@
 import numpy as np
 import trimesh as tmesh
+from random import randint
+import matplotlib.pyplot as plt
 
 
 class ModelClassifier:
@@ -14,36 +16,27 @@ class ModelClassifier:
         """
 
         self.plyObject = tmesh.load(model)
+        self.distribution_data = []
 
     def classify(self):
-        # plt.hist(self.plyObject.vertices)
-        # plt.grid(True)
-        # plt.show()
-        print(self._calc_length())
-
-    def _get_min_values(self):
-        min_value = []
-        for coordinates in self.plyObject.vertices:
-            if len(min_value) == 0:
-                min_value.extend(coordinates)
-            if coordinates[0] <= min_value[0] and coordinates[2] <= min_value[2]:
-                min_value = coordinates
-        return min_value
+        self.generate_dist_graph_data()
+        plt.hist(self.distribution_data)
+        plt.grid(True)
+        plt.show()
 
     def _calc_length(self):
         vertices = self.plyObject.vertices
-        starting_coords = self._get_min_values()
-        total_y_arr = []
+        idx_1 = randint(0, len(vertices)-1)
+        idx_2 = randint(0, len(vertices)-1)
+        first_rand_vertice = vertices[idx_1]
+        second_rand_vertice = vertices[idx_2]
+        distance = self._get_euclidean_distance(first_rand_vertice, second_rand_vertice)
 
-        for i in range(len(vertices) - 1):
-            if vertices[i][1] == starting_coords[1] and vertices[i][2] == starting_coords[2]:
-                total_y_arr.append(vertices[i][0])
+        return distance
 
-        total_y = 0
-        for i in range(len(total_y_arr) - 1):
-            total_y += abs(total_y_arr[i] - total_y_arr[i + 1])
-
-        return total_y
+    def generate_dist_graph_data(self):
+        for i in range(1024^2):
+            self.distribution_data.append(self._calc_length())
 
     @staticmethod
     def _get_average(lst):

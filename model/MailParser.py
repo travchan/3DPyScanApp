@@ -69,7 +69,7 @@ class MailParser:
         except IMAP4.error:
             print('Login Failed.')
 
-    def __downloadAttachments(self, email_message, i):
+    def downloadAttachments(self, email_message, list):
         """ downloads attachments from the users email
 
         Arguments:
@@ -81,43 +81,42 @@ class MailParser:
         directory = "C:/Users/Public/scans"
         fileName = ""
         # downloading attachments
-        for part in email_message.walk():
-            subjectline = email.header.decode_header(email_message['Subject'])[
-                0][0].replace(" ", "_").replace(":", "_")
-            if part.get_content_maintype() == 'multipart':
-                continue
-            if part.get('Content-Disposition') is None:
-                continue
-            fileName = part.get_filename()
-            try:
-                mkdir(directory)
-            except:
-                pass
-            if part.get_content_type() == 'application/zip' and subjectline == i:
-                open(path.join(directory, '%s.zip' %
-                               subjectline), 'wb').write(part.get_payload(decode=True))
-                unzipfile = ZipFile(
-                    path.join(directory, '%s.zip' % subjectline), 'r')
-                unzipfile.extractall(
-                    directory)
-                unzipfile.close()
+
+        for x in range(len(list)):
+            for part in email_message.walk():
+                if part.get_content_maintype() == 'multipart':
+                    continue
+                if part.get('Content-Disposition') is None:
+                    continue
                 try:
-                    num = int(glob(path.join(directory, '{0}(?).obj').format(
-                        subjectline))[-1].split('(')[1].split(')')[0]) + 1
-                except IndexError:
-                    num = 0
-                rename(path.join(directory, 'Model.obj'),
-                       path.join(directory, '{0}({1}).obj'.format(subjectline, num)))
-                remove(path.join(directory,
-                                 '%s.zip' % subjectline))
-                filelist = glob(path.join(directory, '*.mtl')) + \
-                    glob(path.join(directory, '*.jpg'))
-                for i in filelist:
-                    remove(i)
-                return fileName
+                    mkdir(directory)
+                except:
+                    pass
+                if part.get_content_type() == 'application/zip':
+                    open(path.join(directory, '%s.zip' %
+                                   str(list[x])), 'wb').write(part.get_payload(decode=True))
+                    unzipfile = ZipFile(
+                        path.join(directory, '%s.zip' % str(list[x])), 'r')
+                    unzipfile.extractall(
+                        directory)
+                    unzipfile.close()
+                    try:
+                        num = int(glob(path.join(directory, '{0}(?).obj').format(
+                            str(list[x])))[-1].split('(')[1].split(')')[0]) + 1
+                    except IndexError:
+                        num = 0
+                    rename(path.join(directory, 'Model.obj'),
+                           path.join(directory, '{0}({1}).obj'.format(str(list[x]), num)))
+                    remove(path.join(directory,
+                                     '%s.zip' % str(list[x])))
+                    filelist = glob(path.join(directory, '*.mtl')) + \
+                        glob(path.join(directory, '*.jpg'))
+                    for i in filelist:
+                        remove(i)
 
     def get_scan(self):
         list = []
+        email_message = ''
         mailBox = self.__connectToServer()
         try:
             log_stat = self.__login(mailBox)
@@ -139,13 +138,11 @@ class MailParser:
                     raw_email = email_data[0][1]
                     raw_email_string = raw_email.decode('utf-8')
                     email_message = email.message_from_string(raw_email_string)
-                    # self.__downloadAttachments(email_message, 'Cube_Test02_BoxSize_Small')
-                    subject = str(email.header.decode_header(
-                        email_message['Subject'])[0][0])
-                    list.append(subject)
-                mailBox.close()
-                mailBox.logout()
-                return list
+                    subject = email.message_from_string(raw_email_string).get('subject')
+                    list.insert(0,subject)
+                # mailBox.close()
+                # mailBox.logout()
+                return (list,email_message)
             except IMAP4.error:
                 print('Unable to get mail. Please check your email and password.')
         except AttributeError:
@@ -153,5 +150,6 @@ class MailParser:
 if __name__ == '__main__':
     # credentials.py is a local file containing email credentials; hidden on GitHub by .gitignore
     import credentials as creds
-    parser = MailParser(creds.GMAIL, creds.GMAIL_PASSWORD)
-    print(parser.get_scan())
+    parser = MailParser(creds.OUTLOOK_EMAIL, creds.GMAIL_PASSWORD)
+    i = parser.get_scan()
+    parser.downloadAttachments(i[1], ['Cube_Test03_BoxSize_Small', 'Cube_Test02_BoxSize_Medium', 'Cube_Test_01_BoxSize_Large'])

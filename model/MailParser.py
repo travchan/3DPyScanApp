@@ -83,36 +83,37 @@ class MailParser:
         # downloading attachments
 
         for x in range(len(list)):
-            for part in email_message.walk():
-                if part.get_content_maintype() == 'multipart':
-                    continue
-                if part.get('Content-Disposition') is None:
-                    continue
-                try:
-                    mkdir(directory)
-                except:
-                    pass
-                if part.get_content_type() == 'application/zip':
-                    open(path.join(directory, '%s.zip' %
-                                   str(list[x])), 'wb').write(part.get_payload(decode=True))
-                    unzipfile = ZipFile(
-                        path.join(directory, '%s.zip' % str(list[x])), 'r')
-                    unzipfile.extractall(
-                        directory)
-                    unzipfile.close()
+            for y in range(len(email_message)):
+                for part in email_message[y].walk():
+                    if part.get_content_maintype() == 'multipart':
+                        continue
+                    if part.get('Content-Disposition') is None:
+                        continue
                     try:
-                        num = int(glob(path.join(directory, '{0}(?).obj').format(
-                            str(list[x])))[-1].split('(')[1].split(')')[0]) + 1
-                    except IndexError:
-                        num = 0
-                    rename(path.join(directory, 'Model.obj'),
-                           path.join(directory, '{0}({1}).obj'.format(str(list[x]), num)))
-                    remove(path.join(directory,
-                                     '%s.zip' % str(list[x])))
-                    filelist = glob(path.join(directory, '*.mtl')) + \
-                        glob(path.join(directory, '*.jpg'))
-                    for i in filelist:
-                        remove(i)
+                        mkdir(directory)
+                    except:
+                        pass
+                        if part.get_content_type() == 'application/zip' and email_message[y].get('subject') == str(list[x]):
+                            open(path.join(directory, '%s.zip' %
+                                           str(list[x])), 'wb').write(part.get_payload(decode=True))
+                            unzipfile = ZipFile(
+                                path.join(directory, '%s.zip' % str(list[x])), 'r')
+                            unzipfile.extractall(
+                                directory)
+                            unzipfile.close()
+                            try:
+                                num = int(glob(path.join(directory, '{0}(?).obj').format(
+                                    str(list[x])))[-1].split('(')[1].split(')')[0]) + 1
+                            except IndexError:
+                                num = 0
+                            rename(path.join(directory, 'Model.obj'),
+                                   path.join(directory, '{0}({1}).obj'.format(str(list[x]), num)))
+                            remove(path.join(directory,
+                                             '%s.zip' % str(list[x])))
+                            filelist = glob(path.join(directory, '*.mtl')) + \
+                                glob(path.join(directory, '*.jpg'))
+                            for i in filelist:
+                                remove(i)
 
     def get_scan(self):
         list = []
@@ -127,7 +128,7 @@ class MailParser:
                 ids = data[0]
                 # list of uids
                 id_list = ids.split()
-
+                y = []
                 i = len(id_list)
                 for x in range(i):
                     latest_email_uid = id_list[x]
@@ -139,10 +140,11 @@ class MailParser:
                     raw_email_string = raw_email.decode('utf-8')
                     email_message = email.message_from_string(raw_email_string)
                     subject = email.message_from_string(raw_email_string).get('subject')
+                    y.insert(0,email_message)
                     list.insert(0,subject)
                 # mailBox.close()
                 # mailBox.logout()
-                return [log_stat,list,email_message,mailBox]
+                return [log_stat,list,y,mailBox]
             except IMAP4.error:
                 self.error = "Unable to connect to Email service"
         except AttributeError:

@@ -21,6 +21,7 @@ class MailParser:
         self.password = b64encode(password.encode('ascii'))
 
         self.__assignHost(self.email)
+        self.error = False
 
     def __assignHost(self, email_str):
         """ determines the host address based on the user email input
@@ -28,16 +29,15 @@ class MailParser:
         Arguments:
             email_str {string} -- email pulled from the user input
         """
-
-        email_str = self.email.split('@')
-
         try:
+            email_str = self.email.split('@')
             if email_str[1] == 'outlook.com':
                 self.host = 'imap-mail.' + email_str[1]
             elif email_str[1] == 'gmail.com':
                 self.host = 'imap.' + email_str[1]
-        except IndexError:
-            print("Incomplete Email")
+        except IndexError or TypeError:
+            self.error = "Please use an Outlook email or Gmail"
+
 
     def __connectToServer(self):
         """ Connects to email server
@@ -50,7 +50,7 @@ class MailParser:
             print('Connecting to ' + self.host)
             return IMAP4_SSL(self.host)
         except AttributeError:
-            print('Invalid Host Address')
+            self.error = "Unable to connect to Email service"
 
     def __login(self, mailbox):
         """ Uses login credentials to access email server
@@ -66,8 +66,8 @@ class MailParser:
             mailbox.login(self.email, b64decode(self.password).decode('ascii'))
             print('Login Successful')
             return mailbox.list()
-        except IMAP4.error:
-            print('Login Failed.')
+        except IMAP4.error or TypeError:
+            self.error = 'Incorrect Email or Password'
 
     def downloadAttachments(self, email_message, list):
         """ downloads attachments from the users email
@@ -144,13 +144,12 @@ class MailParser:
                 # mailBox.logout()
                 return [log_stat,list,email_message,mailBox]
             except IMAP4.error:
-                print('Unable to get mail. Please check your email and password.')
+                self.error = "Unable to connect to Email service"
         except AttributeError:
             pass
 
     def logout(self, mailBox):
         mailBox.close()
-        print('logout')        
         mailBox.logout()
 
 if __name__ == '__main__':

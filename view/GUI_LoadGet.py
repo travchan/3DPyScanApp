@@ -17,20 +17,20 @@ class LoadGet_UI(UI):
         self.mid_frame.grid_columnconfigure(0, weight=1)
         self.mid_frame.grid_columnconfigure(2, weight=1)
 
-        self.mid_frame.grid_rowconfigure(0, weight=0)
-        self.mid_frame.grid_rowconfigure(1, weight=1)
+        # self.mid_frame.grid_rowconfigure(1, weight=1)
+        self.mid_frame.grid_rowconfigure(0, weight=1)
 
-        self.CS_frame = Frame(self.mid_frame)
+        self.mid_frame.grid_rowconfigure(2, weight=1)
 
+        self.load_get_frame = Frame(self.mid_frame)
+        self.load_get_frame.grid(row=1, column=1, sticky='nsew')
         self.header_label = Label(self.mid_frame, text='', font=("TkDefaultFont", 12, 'bold'))
-
-        self.get_but = Button(self.CS_frame, text='Get Scans', width=10)
-        self.load_but = Button(self.CS_frame, text='Load Scans', width=10)
-
         self.header_label.grid(row=0, column=1, pady=10)
-        self.CS_frame.grid(row=1, column=1)
-        self.get_but.grid(row=0, column=0, padx=20)
-        self.load_but.grid(row=0, column=1, padx=20)
+
+        self.get_but = Button(self.load_get_frame, text='Get Scans', width=30, height=2)
+        self.load_but = Button(self.load_get_frame, text='Load Scans', width=30, height=2)
+        self.get_but.grid(row=1, column=1, pady=7)
+        self.load_but.grid(row=2, column=1, pady=7)
 
         # -------------Bottom FRAME ---------------------------------------------
         self.botbut_frame.grid_rowconfigure(0, weight=1)

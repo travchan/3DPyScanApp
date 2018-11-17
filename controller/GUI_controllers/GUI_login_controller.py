@@ -1,5 +1,6 @@
 
 from tkinter import *
+
 from tkinter import messagebox
 
 # from model.GUI_model.GUI_login_model import login_model
@@ -25,6 +26,7 @@ class login_controller:
     def __init__(self, master):
         self.master = master
         self.img = './view/BCIT_Logo.png'
+
         main_frame.current_frame = login_UI(self.master, self.img)
 
         main_frame.current_frame.login_but.config(command=self._login)
@@ -36,32 +38,49 @@ class login_controller:
     def _login(self):
         user_email = str(main_frame.current_frame.account_entry.get())
         user_pass = str(main_frame.current_frame.pin_entry.get())
-        scan_type = str(main_frame.current_frame.var.get())
-
-        mail = MailParser(user_email, user_pass)
-        mail_list = mail.get_scan()
+        # scan_type = str(main_frame.current_frame.var.get())
         
-        if mail_list == None:
-            self.error = login_error()
-            self.error.ok_but.config(command=lambda: self.error.master.destroy())
+        if user_email == "" or user_pass == "":
+            messagebox.showinfo("Error", "Please Enter Email or Password")
         else:
-            self.success = login_success()
-            print(mail_list[1])
-            self.success.ok_but.config(command=lambda: self.success.master.destroy())
-            for models in mail_list[1]:
-                main_frame.current_frame.model_list.insert(END, models)
+            try:
+                self.mail = MailParser(user_email, user_pass)
+                mail_list = self.mail.get_scan()
+                self.mail_message = mail_list[2]
+                self.mail_box = mail_list[-1]
+                if len(mail_list[1]) == 0:
+                    messagebox.showinfo("Success", 'There are no scans to fetch')
+                else:
+                    for models in mail_list[1]:
+                        main_frame.current_frame.model_list.insert(END, models)
+                    messagebox.showinfo("Success", 'Scans have been fetched')
+            except:
+                if self.mail.error == "Please use an Outlook email or Gmail":
+                    messagebox.showinfo("Error", "Please use an Outlook email or Gmail")
+                elif self.mail.error == 'Invalid Host Address':
+                    messagebox.showinfo("Error", 'Invalid Host Address')
+                elif self.mail.error == 'Incorrect Email or Password':
+                    messagebox.showinfo("Error", 'Incorrect Email or Password')
+                elif self.mail.error == "Unable to connect to Email service":
+                    messagebox.showinfo("Error", "Unable to connect to Email service")
+
+
 
     def exit(self):
         from .GUI_LoadGet_controller import LoadGet_controller
         LoadGet_controller(self.master)
+        self.mail.logout(self.mail_box)
 
     def select_models(self):
         selected_models =[]
         val = main_frame.current_frame.model_list.curselection()
         for i, v in enumerate(val):
             selected_models.append(main_frame.current_frame.model_list.get(val[i]))
-        print(selected_models)
-        
+        self.mail.downloadAttachments(self.mail_message, selected_models)
+        messagebox.showinfo("Success", 'Scans are saved in C://Users//Pulbic//scans folder')
+        self.mail.logout(self.mail_box)
+
+
 if __name__ == "__main__":
     # root = Tk()
     frame = login_UI()

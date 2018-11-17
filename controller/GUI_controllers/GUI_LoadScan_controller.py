@@ -32,8 +32,6 @@ class LoadScan_controller:
         ModelClassifier(filename).classify()
 
 
-
-
     def Exit(self):
         from .GUI_LoadGet_controller import LoadGet_controller
         LoadGet_controller(self.master)

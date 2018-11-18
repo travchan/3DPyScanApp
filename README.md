@@ -29,6 +29,11 @@ Run the following line in Command Prompt:
 PyScan\Scripts\activate.bat
 ```
 
+The terminal should now have look something like this:
+```
+(PyScan) D:\pyscan>
+```
+
 ### Linux or MacOS: 
 
 Run the following line in the terminal:
@@ -38,15 +43,16 @@ source /PyScan/bin/activate
 
 The terminal should now have look something like this:
 ```
-(PyScan) D:\pyscan>
+(PyScan) root@localhost:~/pyscan$
 ```
 
+### Deactivate the Virtual Environment
 To deactivate the virtual environment, simply type:
 ```
 deactivate
 ```
 
-### Running the PyScan3D Application
+## Running the PyScan3D Application
 In the root folder of the repository type:
 ```
 python pyscan.py

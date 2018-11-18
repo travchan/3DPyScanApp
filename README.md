@@ -1,10 +1,8 @@
-# pyscan
+# PyScan3D
+Uses data gathered from the Structure Sensor by Occipital to classify things into their respective shapes.
 
-Features: <br />
-Email Parser - collects .ply scans from an email <br />
-Object Classifier - loads .ply file and returns the shape of the object <br />
-<br />
-Dependencies: <br />
-Numpy <br />
-Trimesh <br />
-Pyglet
+## Features:
+**Mail Parser** - Log in to your email to select and download scans <br>
+**Object Classifier** - Load a .obj or .ply file to classify its shape
+
+## Installation

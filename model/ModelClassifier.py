@@ -2,6 +2,7 @@ import numpy as np
 import trimesh as tmesh
 from random import randint
 import matplotlib.pyplot as plt
+import os
 
 
 class ModelClassifier:
@@ -19,10 +20,28 @@ class ModelClassifier:
         self.distribution_data = []
 
     def classify(self):
-        self.generate_distribution_data(self.plyObject.vertices)
+        hist_data = self.generate_distribution_data(self.plyObject.vertices)
+        results = self.compare_models(hist_data)
 
-    def compare_models(self):
-        pass
+        if results[0] is True and results[1] is True:
+            print("It is a Cube!")
+        else:
+            print("It is not a cube")
+
+    def compare_models(self, hist_data):
+        occurrences = list(hist_data[0])
+        distances = list(hist_data[1])
+
+        shape_data = self._get_shape_data()
+        o_data = shape_data[1].strip("[").strip("]").split(",")
+        o_data = [float(i) for i in o_data]
+        d_data = shape_data[2].strip("[").strip("]").split(",")
+        d_data = [float(i) for i in d_data]
+
+        result1 = self.data_check(occurrences, o_data)
+        result2 = self.data_check(distances, d_data)
+
+        return result1, result2
 
     def generate_distribution_data(self, vertices):
         distribution_data = []
@@ -47,6 +66,25 @@ class ModelClassifier:
     @staticmethod
     def _get_euclidean_distance(a, b):
         return np.linalg.norm(a - b)
+
+    @staticmethod
+    def _get_shape_data():
+        with open(os.path.join(os.path.dirname(__file__), "training_data.txt"), 'r') as data:
+            lines = data.readlines()
+            return lines[0].split(";")
+
+    @staticmethod
+    def data_check(data1, data2):
+        checks_passed = 0
+        for index in range(len(data1)):
+            lower_bound = data2[index] - data2[index] * 0.25
+            upper_bound = data2[index] + data2[index] * 0.25
+            if upper_bound >= data1[index] >= lower_bound:
+                checks_passed += 1
+        if checks_passed >= len(data1)*0.75:
+            return True
+        else:
+            return False
 
     @staticmethod
     def _show_histogram():

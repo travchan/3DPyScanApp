@@ -8,9 +8,19 @@ def main():
     with open("training_data.txt", 'w') as training_data:
         temp_list.append(['Cube', hist_data[0], hist_data[1]])
         for line in temp_list:
-            object_data = "{0}; {1}; {2}".format(line[0], list(line[1]), list(line[2]))
+            object_data = "{0};{1};{2}".format(line[0], list(line[1]), list(line[2]))
             training_data.write(object_data)
 
 
+def read_from_file():
+    temp_list = []
+    with open("training_data.txt", 'r') as data:
+        lines = data.readlines()
+        cube_data = lines[0].split(";")
+        test = cube_data[1].strip("[").strip("]").split(",")
+        test = [float(i) for i in test]
+        print(test)
+
+
 if __name__ == '__main__':
-    main()
+    read_from_file()

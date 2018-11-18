@@ -18,10 +18,8 @@ Clone the repository using SSH:
 git clone git@github.com:emilieez/pyscan.git
 ```
 
-
-A virtual environment is provided if the dependencies are not installed.
-
 ## Run the PyScan virtual environment
+A virtual environment is provided if the dependencies are not installed.
 ### Windows:
 
 Run the following line in Command Prompt:
@@ -50,6 +48,12 @@ The terminal should now have look something like this:
 To deactivate the virtual environment, simply type:
 ```
 deactivate
+```
+
+### Installing Dependencies
+Alternatively, all dependencies can be installed using this command in the root folder of the repository:
+```
+pip install -r requirements.txt
 ```
 
 ## Running the PyScan3D Application

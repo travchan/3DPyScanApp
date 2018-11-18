@@ -1,12 +1,12 @@
 import numpy as np
 import trimesh as tmesh
-from random import randint
+from random import choice
 import matplotlib.pyplot as plt
 import os
 
 
 class ModelClassifier:
-    """ Uses the trimesh and numpy libraries to extract .ply data for model classification
+    """ Uses the trimesh and matplotlib libraries to extract data for model classification
     """
 
     def __init__(self, model):
@@ -54,10 +54,22 @@ class ModelClassifier:
         return plt.hist(distribution_data, histtype='step', bins=40)
 
     def _calc_length(self, vertices):
-        idx_1 = randint(0, len(vertices)-1)
-        idx_2 = randint(0, len(vertices)-1)
-        first_rand_vertex = vertices[idx_1]
-        second_rand_vertex = vertices[idx_2]
+        used_coordinate_pairs = []
+        first_rand_vertex = choice(vertices)
+        second_rand_vertex = choice(vertices)
+
+        while True:
+            if set(first_rand_vertex).intersection(second_rand_vertex) != 3:
+                if [first_rand_vertex, second_rand_vertex] not in used_coordinate_pairs:
+                    used_coordinate_pairs.append([first_rand_vertex, second_rand_vertex])
+                    break
+                else:
+                    first_rand_vertex = choice(vertices)
+                    second_rand_vertex = choice(vertices)
+            else:
+                first_rand_vertex = choice(vertices)
+                second_rand_vertex = choice(vertices)
+
         distance = self._get_euclidean_distance(first_rand_vertex, second_rand_vertex)
 
         return distance
@@ -80,8 +92,8 @@ class ModelClassifier:
     def data_check(data1, data2):
         checks_passed = 0
         for index in range(len(data1)):
-            lower_bound = data2[index] - data2[index] * 0.25
-            upper_bound = data2[index] + data2[index] * 0.25
+            lower_bound = data2[index] - data2[index] * 0.20
+            upper_bound = data2[index] + data2[index] * 0.20
             if upper_bound >= data1[index] >= lower_bound:
                 checks_passed += 1
         if checks_passed >= len(data1)*0.75:

@@ -20,6 +20,9 @@ class ModelClassifier:
         self.distribution_data = []
 
     def classify(self):
+        #  TODO: Add model Scaling
+        #  TODO: Add averages from multiple cube files for comparison
+        #  TODO: Documentation
         hist_data = self.generate_distribution_data(self.plyObject.vertices)
         results = self.compare_models(hist_data)
 

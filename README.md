@@ -27,7 +27,7 @@ Run the following line in Command Prompt:
 PyScan\Scripts\activate.bat
 ```
 
-The terminal should now have look something like this:
+The terminal should now look something like this:
 ```
 (PyScan) D:\pyscan>
 ```
@@ -39,7 +39,7 @@ Run the following line in the terminal:
 source /PyScan/bin/activate
 ```
 
-The terminal should now have look something like this:
+The terminal should now look something like this:
 ```
 (PyScan) root@localhost:~/pyscan$
 ```

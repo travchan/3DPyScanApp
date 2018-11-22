@@ -1,7 +1,5 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
-import _thread
-
 from view import LoadScan_UI
 from view import main_frame
 from model import ModelClassifier
@@ -31,9 +29,10 @@ class LoadScan_controller:
         filename = askopenfilename(initialdir="C:/Users/public/scans/", title="Select a file")
         main_frame.current_frame.log_File_Path.set(filename)
         classifier = ModelClassifier(filename)
-        _thread.start_new_thread(self.threaded_classifier, (classifier, ))
+        self.output_classifier(classifier)
 
-    def threaded_classifier(self, classifier):
+    @staticmethod
+    def output_classifier(classifier):
         main_frame.current_frame.Data_listbox.insert(END, "Loading file: {}".format(classifier.filename))
         main_frame.current_frame.Data_listbox.insert(END, "Processing...")
         classifier.classify()

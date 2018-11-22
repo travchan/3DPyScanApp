@@ -15,7 +15,7 @@ class ModelClassifier:
         Arguments:
             model {file path} -- file path of the .ply file
         """
-
+        self.filename = model
         self.plyObject = tmesh.load(model)
         self.results = []
 

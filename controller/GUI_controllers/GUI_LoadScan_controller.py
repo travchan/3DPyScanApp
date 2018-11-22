@@ -1,5 +1,6 @@
 from tkinter import *
 from tkinter.filedialog import askopenfilename
+import _thread
 
 from view import LoadScan_UI
 from view import main_frame
@@ -30,11 +31,16 @@ class LoadScan_controller:
         filename = askopenfilename(initialdir="C:/Users/public/scans/", title="Select a file")
         main_frame.current_frame.log_File_Path.set(filename)
         classifier = ModelClassifier(filename)
+        _thread.start_new_thread(self.threaded_classifier, (classifier, ))
+
+    def threaded_classifier(self, classifier):
+        main_frame.current_frame.Data_listbox.insert(END, "Loading file: {}".format(classifier.filename))
+        main_frame.current_frame.Data_listbox.insert(END, "Processing...")
         classifier.classify()
         if classifier.results[0] is True and classifier.results[1] is True:
-            print("It is a Cube :D")
+            main_frame.current_frame.Data_listbox.insert(END, "It is a Cube :D")
         else:
-            print("It is not a cube :(")
+            main_frame.current_frame.Data_listbox.insert(END, "It is not a cube :(")
         classifier.show_histogram()
 
 

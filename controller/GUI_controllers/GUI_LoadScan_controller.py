@@ -29,7 +29,14 @@ class LoadScan_controller:
     def openFile(self):
         filename = askopenfilename(initialdir="C:/Users/public/scans/", title="Select a file")
         main_frame.current_frame.log_File_Path.set(filename)
-        ModelClassifier(filename).classify()
+        classifier = ModelClassifier(filename)
+        classifier.classify()
+        if classifier.results[0] is True and classifier.results[1] is True:
+            print("It is a Cube :D")
+        else:
+            print("It is not a cube :(")
+        classifier.show_histogram()
+
 
 
     def Exit(self):

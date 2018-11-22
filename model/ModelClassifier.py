@@ -17,29 +17,22 @@ class ModelClassifier:
         """
 
         self.plyObject = tmesh.load(model)
-        self.distribution_data = []
+        self.results = []
 
     def classify(self):
         #  TODO: Add model Scaling
         #  TODO: Add averages from multiple cube files for comparison
         #  TODO: Documentation
         hist_data = self.generate_distribution_data(self.plyObject.vertices)
-        results = self.compare_models(hist_data)
-
-        if results[0] is True and results[1] is True:
-            print("It is a Cube!")
-        else:
-            print("It is not a cube")
+        self.results = self.compare_models(hist_data)
 
     def compare_models(self, hist_data):
         occurrences = list(hist_data[0])
         distances = list(hist_data[1])
 
         shape_data = self._get_shape_data()
-        o_data = shape_data[1].strip("[").strip("]").split(",")
-        o_data = [float(i) for i in o_data]
-        d_data = shape_data[2].strip("[").strip("]").split(",")
-        d_data = [float(i) for i in d_data]
+        o_data = [float(i) for i in shape_data[1:41]]
+        d_data = [float(i) for i in shape_data[41:len(shape_data)]]
 
         result1 = self.data_check(occurrences, o_data)
         result2 = self.data_check(distances, d_data)
@@ -75,6 +68,13 @@ class ModelClassifier:
         return distance
 
     @staticmethod
+    def show_histogram():
+        plt.title('Shape Distribution Graph')
+        plt.ylabel('Frequency')
+        plt.xlabel('Distance')
+        plt.show()
+
+    @staticmethod
     def _get_average(lst):
         return sum(lst) / len(lst)
 
@@ -86,7 +86,7 @@ class ModelClassifier:
     def _get_shape_data():
         with open(os.path.join(os.path.dirname(__file__), "training_data.txt"), 'r') as data:
             lines = data.readlines()
-            return lines[0].split(";")
+            return lines[0].split(",")
 
     @staticmethod
     def data_check(data1, data2):
@@ -100,13 +100,6 @@ class ModelClassifier:
             return True
         else:
             return False
-
-    @staticmethod
-    def _show_histogram():
-        plt.title('Shape Distribution Graph')
-        plt.ylabel('Frequency')
-        plt.xlabel('Distance')
-        plt.show()
 
 
 if __name__ == "__main__":
